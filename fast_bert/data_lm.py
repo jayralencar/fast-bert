@@ -181,6 +181,7 @@ class BertLMDataBunch(object):
         logger=None,
         clear_cache=False,
         no_cache=False,
+        block_size=None
     ):
 
         train_file = "lm_train.txt"
@@ -207,6 +208,7 @@ class BertLMDataBunch(object):
             logger=logger,
             clear_cache=clear_cache,
             no_cache=no_cache,
+            block_size=block_size
         )
 
     def __init__(
@@ -222,6 +224,7 @@ class BertLMDataBunch(object):
         logger=None,
         clear_cache=False,
         no_cache=False,
+        block_size=None
     ):
 
         # just in case someone passes string instead of Path
@@ -239,6 +242,9 @@ class BertLMDataBunch(object):
         # Bug workaround for RoBERTa
         if model_type == "roberta":
             tokenizer.max_len_single_sentence = tokenizer.max_len - 2
+          
+        if block_size is None:
+            block_size = self.tokenizer.max_len_single_sentence
 
         self.tokenizer = tokenizer
         self.max_seq_length = max_seq_length
@@ -278,7 +284,7 @@ class BertLMDataBunch(object):
                 train_filepath,
                 cached_features_file,
                 self.logger,
-                block_size=self.tokenizer.max_len_single_sentence,
+                block_size=block_size,
             )
 
             self.train_batch_size = self.batch_size_per_gpu * max(1, self.n_gpu)
@@ -304,7 +310,7 @@ class BertLMDataBunch(object):
                 val_filepath,
                 cached_features_file,
                 self.logger,
-                block_size=self.tokenizer.max_len_single_sentence,
+                block_size=block_size,
             )
 
             self.val_batch_size = self.batch_size_per_gpu * 2 * max(1, self.n_gpu)
