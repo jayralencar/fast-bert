@@ -244,7 +244,7 @@ class BertLMDataBunch(object):
             tokenizer.max_len_single_sentence = tokenizer.max_len - 2
           
         if block_size is None:
-            block_size = self.tokenizer.max_len_single_sentence
+            block_size = tokenizer.max_len_single_sentence
 
         self.tokenizer = tokenizer
         self.max_seq_length = max_seq_length
